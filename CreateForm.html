@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>Добавление нового клиента</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .form-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #0d6efd;
+    }
+    .required::after {
+      content: " *";
+      color: red;
+    }
+    .is-invalid {
+      border-color: #dc3545 !important;
+    }
+    .readonly-field {
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <h1 class="mb-4 text-center">Добавление нового клиента</h1>
+    
+    <div id="clientInfo" class="card mb-4">
+      <div class="card-header bg-light">
+        <h2 class="h5 mb-0">Данные клиента</h2>
+      </div>
+      <div class="card-body">
+        <form id="clientForm">
+          <div class="form-section">
+            <div class="section-title">Договор</div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label class="form-label">Номер договора</label>
+                <input type="text" name="contractNumber" class="form-control" placeholder="Например: № 5-1 Ф/П">
+                <small class="form-text text-muted">Оставьте пустым для автоматической генерации</small>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <div class="section-title">Основная информация</div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label required">ИИН/БИН</label>
+                <input type="text" name="iin" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label required">Телефон</label>
+                <input type="text" name="phone" class="form-control" required>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label required">ФИО чистый</label>
+                <input type="text" name="fullName" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label required">Крестьянское хозяйство (КХ)</label>
+                <input type="text" name="kx" class="form-control" required>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label required">Адрес</label>
+              <textarea name="address" class="form-control" rows="2" required></textarea>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <div class="section-title">Земельные участки</div>
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label required">Наличие земель (га)</label>
+                <input type="number" name="l_availability" class="form-control" value="0" min="0" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label required">Орошаемые (га)</label>
+                <input type="number" name="l_irrigated" class="form-control readonly-field" value="0" min="0" readonly id="irrigatedInput" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label required">Объем воды (м³)</label>
+                <input type="number" name="volume_water" class="form-control readonly-field" value="0" min="0" readonly id="volumeWaterInput" required>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label required">Тариф (₸)</label>
+                <input type="number" name="tarrif" class="form-control" value="0" min="0" id="tarrifInput" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label required">Канал</label>
+                <input type="text" name="channel" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label required">Выдел</label>
+                <input type="text" name="channel_allocation" class="form-control" required>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label required">Село</label>
+                <input type="text" name="village" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label required">Кадастровый номер</label>
+                <input type="text" name="cadastral" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <div class="section-title">Культуры (га)</div>
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label class="form-label">Картофель</label>
+                <input type="number" name="картофель" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Овощи</label>
+                <input type="number" name="овощи(бюджет.орган)" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Сах. свекла</label>
+                <input type="number" name="сах.свекла" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Многолетние травы</label>
+                <input type="number" name="многолетние травы" class="form-control culture-input" value="0" min="0">
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label class="form-label">Подсолнечник</label>
+                <input type="number" name="подсолнечник" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Бахчевые</label>
+                <input type="number" name="бахчевые" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Кукуруза на зерно</label>
+                <input type="number" name="кукуруза на зерно" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Сады</label>
+                <input type="number" name="сады" class="form-control culture-input" value="0" min="0">
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label class="form-label">Соя</label>
+                <input type="number" name="соя(масленичные)" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Яровые зерновые</label>
+                <input type="number" name="яровые зерновые" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Озимая пшеница</label>
+                <input type="number" name="озимая пшеница" class="form-control culture-input" value="0" min="0">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Тал-терек</label>
+                <input type="number" name="тал-терек" class="form-control culture-input" value="0" min="0">
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label required">Сумма с НДС (₸)</label>
+                <input type="number" name="sum_snds" class="form-control readonly-field" value="0" min="0" id="sumSndsInput" readonly required>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="actions" class="text-center">
+      <button id="generateBtn" class="btn btn-success btn-lg w-100">Сгенерировать 4 документа</button>
+    </div>
+
+    <div id="loader" class="loader"></div>
+    <div id="result" class="alert alert-success mt-3" style="display:none;"></div>
+  </div>
+
+  <script>
+    document.getElementById("generateBtn").addEventListener("click", generateDocs);
+
+    // Тарифы для культур (тенге/га)
+    const CULTURE_TARIFFS = {
+      "картофель": 7067,
+      "овощи(бюджет.орган)": 7067,
+      "сах.свекла": 7133,
+      "многолетние травы": 8400,
+      "подсолнечник": 4800,
+      "бахчевые": 3933,
+      "кукуруза на зерно": 5733,
+      "сады": 7733,
+      "соя(масленичные)": 5067,
+      "яровые зерновые": 3733,
+      "озимая пшеница": 3133,
+      "тал-терек": 7733
+    };
+
+    // Пересчет объема воды и суммы с НДС
+    function recalculateWaterAndSum() {
+      let totalArea = 0;
+      let waterVolume = 0;
+      
+      // Собираем площади всех культур
+      const cultureInputs = document.querySelectorAll('.culture-input');
+      cultureInputs.forEach(input => {
+        const area = parseFloat(input.value) || 0;
+        totalArea += area;
+        
+        // Рассчитываем объем воды для каждой культуры
+        const cultureName = input.name;
+        const cultureTariff = CULTURE_TARIFFS[cultureName] || 0;
+        waterVolume += area * cultureTariff;
+      });
+      
+      // Обновляем поле "Орошаемые"
+      document.getElementById('irrigatedInput').value = totalArea.toFixed(2);
+      
+      // Обновляем поле "Объем воды"
+      document.getElementById('volumeWaterInput').value = waterVolume.toFixed(2);
+      
+      // Рассчитываем сумму с НДС
+      const tariff = parseFloat(document.getElementById('tarrifInput').value) || 0;
+      const totalAmount = waterVolume * tariff;
+      document.getElementById('sumSndsInput').value = totalAmount.toFixed(2);
+    }
+
+    // Инициализация обработчиков для пересчета
+    function initRecalculationHandlers() {
+      const tariffInput = document.getElementById('tarrifInput');
+      const cultureInputs = document.querySelectorAll('.culture-input');
+      
+      tariffInput.addEventListener('input', recalculateWaterAndSum);
+      cultureInputs.forEach(input => {
+        input.addEventListener('input', recalculateWaterAndSum);
+      });
+    }
+
+    function generateDocs() {
+      showLoader(true);
+      
+      const form = document.getElementById("clientForm");
+      const requiredFields = [
+        'iin', 'phone', 'fullName', 'kx', 'address',
+        'l_availability', 'l_irrigated', 'volume_water', 'tarrif',
+        'channel', 'channel_allocation', 'village', 'cadastral', 'sum_snds'
+      ];
+      
+      let isValid = true;
+      let errorMessage = "Заполните обязательные поля:\n";
+      
+      // Сбросим стили ошибок
+      requiredFields.forEach(field => {
+        const element = form.elements[field];
+        if (element) {
+          element.classList.remove('is-invalid');
+        }
+      });
+      
+      // Проверка обязательных полей
+      requiredFields.forEach(field => {
+        const element = form.elements[field];
+        if (!element) return;
+        
+        let value = element.value;
+        let isEmpty = false;
+
+        if (element.type === 'number') {
+          const numValue = parseFloat(value);
+          isEmpty = isNaN(numValue) || numValue < 0;
+        } else {
+          isEmpty = !value || (typeof value === 'string' && value.trim() === '');
+        }
+        
+        if (isEmpty) {
+          element.classList.add('is-invalid');
+          isValid = false;
+          const label = element.previousElementSibling?.textContent || field;
+          errorMessage += `- ${label}\n`;
+        }
+      });
+      
+      // Проверка площади земель
+      const landAvailability = parseFloat(form.elements['l_availability'].value) || 0;
+      const irrigated = parseFloat(form.elements['l_irrigated'].value) || 0;
+      
+      if (irrigated > landAvailability) {
+        form.elements['l_irrigated'].classList.add('is-invalid');
+        isValid = false;
+        errorMessage += "- Орошаемые земли не могут превышать общее наличие земель\n";
+      }
+      
+      if (!isValid) {
+        showError({ message: errorMessage });
+        showLoader(false);
+        return;
+      }
+      
+      const formData = {};
+      // Собираем все данные формы с преобразованием типов
+      for (const element of form.elements) {
+        if (element.name && element.type !== 'button') {
+          if (element.type === 'number') {
+            formData[element.name] = parseFloat(element.value) || 0;
+          } else {
+            formData[element.name] = element.value;
+          }
+        }
+      }
+      
+      google.script.run
+        .withSuccessHandler(showResult)
+        .withFailureHandler(showError)
+        .generateDocumentsForClient(formData);
+    }
+
+    function showResult(message) {
+      const resultEl = document.getElementById("result");
+      resultEl.textContent = message;
+      resultEl.className = "alert alert-success mt-3";
+      resultEl.style.display = 'block';
+      showLoader(false);
+      
+      // Закрываем форму через 3 секунды
+      setTimeout(() => {
+        google.script.host.close();
+      }, 3000);
+    }
+
+    function showError(error) {
+      const resultEl = document.getElementById("result");
+      resultEl.textContent = "Ошибка: " + error.message;
+      resultEl.className = "alert alert-danger mt-3";
+      resultEl.style.display = 'block';
+      showLoader(false);
+    }
+
+    function showLoader(show) {
+      document.getElementById("loader").style.display = show ? 'block' : 'none';
+    }
+    
+    // Инициализация при загрузке страницы
+    window.onload = function() {
+      initRecalculationHandlers();
+    };
+  </script>
+</body>
+</html>
